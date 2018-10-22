@@ -1,0 +1,40 @@
+---
+
+- name: gcc | ensure gcc repo presence
+  become: yes
+  apt_repository:
+    repo: ppa:ubuntu-toolchain-r/test
+    state: present
+
+- name: gcc | establish helper packages
+  become: yes
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - build-essential
+    - software-properties-common
+    - gcc-snapshot
+
+- name: gcc | establish latest stable package
+  become: yes
+  package:
+    name: gcc
+    state: present
+  when:
+    - detail['last_stable'] is defined
+    - detail['last_stable']
+
+- name: gcc | establish specific package versions
+  become: yes
+  package:
+    name: "gcc-{{ item }}"
+    state: present
+  with_items: "{{ detail['versions'] }}"
+  when: detail['versions'] is defined
+
+- name: gcc | update alternatives
+  become: yes
+  shell: update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-{{ item }} {{ 50 - item }} --slave /usr/bin/g++ g++ /usr/bin/g++-{{ item }} || true
+  with_items: "{{ detail['versions'] }}"
+  when: detail['versions'] is defined

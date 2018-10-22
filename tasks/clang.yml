@@ -1,0 +1,50 @@
+---
+
+- block:
+    - name: clang | ensure repo key presence
+      become: yes
+      apt_key:
+        url: https://apt.llvm.org/llvm-snapshot.gpg.key
+        state: present
+
+    - name: clang | ensure repo presence
+      become: yes
+      template:
+        src: clang-repo
+        dest: /etc/apt/sources.list.d/clang-stable-repo-v{{ version }}.list
+      loop_control:
+        loop_var: version
+      with_items: "{{ detail['versions'] }}"
+      when:
+        - detail['versions'] is defined
+
+    - name: clang | update cache
+      become: yes
+      apt:
+        update_cache: yes
+
+- name: clang | establish latest stable package
+  become: yes
+  apt:
+    name: "{{ lookup('template', 'clang-tools.j2') | trim }}"
+    state: present
+
+- name: clang | establish specific package versions
+  become: yes
+  apt:
+    name: "{{ lookup('template', 'clang-tools.j2') | trim }}"
+    state: present
+  loop_control:
+    loop_var: version
+  with_items: "{{ detail['versions'] }}"
+  when: detail['versions'] is defined
+
+- name: clang | update alternatives
+  become: yes
+  alternatives:
+    name: clang
+    path: /usr/bin/clang-{{ item }}
+    priority: 10
+    link: /usr/bin/clang
+  with_items: "{{ detail['versions'] }}"
+  when: detail['versions'] is defined

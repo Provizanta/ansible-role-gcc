@@ -1,0 +1,2 @@
+{%- set suffix = "%s%s" | format('-' if version is defined else '', version if version is defined else '') -%}
+clang{{ suffix }},clang-tools{{ suffix }},libclang{{ suffix }}-dev,libclang1{{ suffix }},clang-format{{ suffix }},lldb{{ suffix }},lld{{ suffix }}
