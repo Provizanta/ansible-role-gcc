@@ -1,0 +1,28 @@
+---
+
+compiler_needed_tools:
+  - build-essential
+  - check
+  - dejagnu
+  - expect
+  - linux-libc-dev
+  - zlib1g-dev
+  - libz-dev
+
+compiler_default_args:
+  - "--build=x86_64-linux-gnu"
+  - "--host=x86_64-linux-gnu"
+  - "--target=x86_64-linux-gnu"
+  - "--enable-languages=c,c++"
+  - "--enable-tls"
+  - "--enable-shared"
+  - "--enable-threads=posix"
+  - "--enable-__cxa_atexit"
+  - "--enable-clocale=gnu"
+  - "--enable-lto"                 
+  - "--enable-bootstrap"
+  - "--disable-nls"                 
+  - "--disable-multilib"
+  - "--disable-install-libiberty"
+  - "--disable-werror"                 
+  - "--with-system-zlib"

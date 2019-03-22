@@ -1,5 +1,0 @@
----
-
-compilers:
-  gcc:
-    last_stable: yes

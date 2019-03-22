@@ -1,2 +1,0 @@
-deb http://apt.llvm.org/{{ ansible_distribution_release | lower}}/ llvm-toolchain-{{ ansible_distribution_release | lower}}{%- if version -%}-{{ version }}{% endif %} main
-deb-src http://apt.llvm.org/{{ ansible_distribution_release | lower}}/ llvm-toolchain-{{ ansible_distribution_release | lower }}{%- if version -%}-{{ version }}{% endif %} main

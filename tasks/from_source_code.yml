@@ -1,0 +1,64 @@
+---
+
+- name: prepare facts
+  set_fact:
+    version: "{{ source.get('version', '8.3.0') }}"
+
+- name: load platform specific variables
+  # include_vars: "{{ lookup('first_found', params, errors='ignore') }}"
+  include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+        - "{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
+        - "{{ ansible_distribution }}.yml"
+        - "{{ ansible_os_family }}.yml"
+        - "{{ ansible_system }}.yml"
+      paths:
+        - '{{ role_path }}/vars'
+      skip: true
+
+- name: establish build prerequisites
+  package:
+    name: "{{ compiler_needed_tools + ['wget','tar'] }}"
+    state: present
+
+- name: prepare paths
+  set_fact:
+    source_path: "/tmp/gcc-{{ version }}"
+    build_dir_path: "/tmp/build/gcc-{{ version }}"
+
+- name: extract source tarball
+  unarchive:
+    src: "https://ftp.gnu.org/gnu/gcc/gcc-{{ version }}/gcc-{{ version }}.tar.gz"
+    remote_src: yes
+    dest: "/tmp"
+    creates: "{{ source_path }}"
+
+- name: download prerequisites
+  shell: "./contrib/download_prerequisites"
+  args:
+    chdir: "{{ source_path }}"
+    creates: "{{ source_path }}/gmp-4.3.2.tar.bz2"
+
+- name: ensure build directory existence
+  become: yes
+  file:
+    path: "{{ build_dir_path }}" 
+    state: directory
+
+- name: configure build process
+  shell: "{{ source_path }}/configure {{ (compiler_default_args + source.get('args',[])) | join(' ') }}" 
+  args:
+    chdir: "{{ build_dir_path }}"
+
+- name: build and install 
+  make:
+    chdir: "{{ build_dir_path }}"
+    target: "{{ item.target }}"
+    params: "{{ item.args | default({})}}" 
+  with_items:
+    - target: "all" 
+      args:
+        --jobs: "{{ ansible_processor_cores * ansible_processor_threads_per_core }}"
+    - target: "install"
+

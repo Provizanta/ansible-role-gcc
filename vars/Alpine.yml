@@ -1,0 +1,27 @@
+---
+
+compiler_needed_tools:
+  - build-base
+  - dejagnu
+  - make
+  - texinfo
+
+# inspired by: https://github.com/n0madic/alpine-gcc/blob/master/Dockerfile
+compiler_default_args:
+  - "--build=x86_64-alpine-linux-musl"
+  - "--host=x86_64-alpine-linux-musl"
+  - "--target=x86_64-alpine-linux-musl"
+  - "--enable-languages=c,c++"
+  - "--enable-tls"
+  - "--enable-shared"
+  - "--enable-threads"
+  - "--enable-__cxa_atexit"
+  - "--enable-clocale=gnu"
+  - "--enable-lto"                 
+  - "--enable-bootstrap"
+  - "--disable-nls"                 
+  - "--disable-multilib"
+  - "--disable-libsanitizer"
+  - "--disable-install-libiberty"
+  - "--disable-werror"                 
+  - "--with-system-zlib"
