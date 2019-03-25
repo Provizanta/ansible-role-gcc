@@ -1,22 +1,5 @@
 ---
 
-- name: prepare facts
-  set_fact:
-    version: "{{ source.get('version', '8.3.0') }}"
-
-- name: load platform specific variables
-  # include_vars: "{{ lookup('first_found', params, errors='ignore') }}"
-  include_vars: "{{ item }}"
-  with_first_found:
-    - files:
-        - "{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
-        - "{{ ansible_distribution }}.yml"
-        - "{{ ansible_os_family }}.yml"
-        - "{{ ansible_system }}.yml"
-      paths:
-        - '{{ role_path }}/vars'
-      skip: true
-
 - name: establish build prerequisites
   package:
     name: "{{ compiler_needed_tools + ['wget','tar'] }}"
@@ -47,7 +30,7 @@
     state: directory
 
 - name: configure build process
-  shell: "{{ source_path }}/configure {{ (compiler_default_args + source.get('args',[])) | join(' ') }}" 
+  shell: "{{ source_path }}/configure {{ compiler_args | join(' ') }}" 
   args:
     chdir: "{{ build_dir_path }}"
 
