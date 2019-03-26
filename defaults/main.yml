@@ -1,2 +1,5 @@
 ---
 
+dir: /tmp/gcc/
+
+install: yes

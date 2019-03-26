@@ -7,15 +7,15 @@
 
 - name: prepare paths
   set_fact:
-    source_path: "/tmp/gcc-{{ version }}"
-    build_dir_path: "/tmp/build/gcc-{{ version }}"
+    source_path: "{{ dir + '/gcc-' + version }}"
+    build_dir_path: "{{ dir + '/gcc-' + version + '/build/' }}"
 
 - name: extract source tarball
+  become: yes
   unarchive:
     src: "https://ftp.gnu.org/gnu/gcc/gcc-{{ version }}/gcc-{{ version }}.tar.gz"
     remote_src: yes
-    dest: "/tmp"
-    creates: "{{ source_path }}"
+    dest: "{{ dir }}"
 
 - name: download prerequisites
   shell: "./contrib/download_prerequisites"
@@ -34,14 +34,17 @@
   args:
     chdir: "{{ build_dir_path }}"
 
-- name: build and install 
+- name: build 
   make:
     chdir: "{{ build_dir_path }}"
-    target: "{{ item.target }}"
-    params: "{{ item.args | default({})}}" 
-  with_items:
-    - target: "all" 
-      args:
-        --jobs: "{{ ansible_processor_cores * ansible_processor_threads_per_core }}"
-    - target: "install"
+    target: all
+    params:
+      --jobs: "{{ ansible_processor_cores * ansible_processor_threads_per_core }}" 
+ 
+- name: install 
+  make:
+    chdir: "{{ build_dir_path }}"
+    target: install
+  when:
+    - install | bool
 

@@ -35,8 +35,7 @@
 
     - name: establish facts
       set_fact:
-        compiler_args: "{{ compiler_default_args + source.get('args', []) }}"
-        version: "{{ source.get('version', '8.3.0') }}"
+        compiler_args: "{{ compiler_default_args + build.get('args', []) }}"
 
     - name: check prefix existence
       stat:
@@ -49,6 +48,6 @@
         - not prefix_path.stat.exists
 
   when:
-    - source is defined
+    - version is defined
 
 
