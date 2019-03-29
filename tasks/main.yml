@@ -13,41 +13,32 @@
         - '{{ role_path }}/tasks/prerequisites/'
       skip: true
 
-- name: establish package
-  become: yes
-  package:
-    name: gcc
-    state: present
+- name: load platform specific variables
+  # include_vars: "{{ lookup('first_found', params, errors='ignore') }}"
+  include_vars: "{{ item }}"
+  with_first_found:
+    - files:
+        - "{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
+        - "{{ ansible_distribution }}.yml"
+        - "{{ ansible_os_family }}.yml"
+        - "{{ ansible_system }}.yml"
+      paths:
+        - '{{ role_path }}/vars'
+      skip: true
+
+- name: establish facts
+  set_fact:
+    compiler_args: "{{ compiler_default_args + build.get('args', []) }}"
 
 - block:
-    - name: load platform specific variables
-      # include_vars: "{{ lookup('first_found', params, errors='ignore') }}"
-      include_vars: "{{ item }}"
-      with_first_found:
-        - files:
-            - "{{ ansible_distribution }}-{{ ansible_distribution_release }}.yml"
-            - "{{ ansible_distribution }}.yml"
-            - "{{ ansible_os_family }}.yml"
-            - "{{ ansible_system }}.yml"
-          paths:
-            - '{{ role_path }}/vars'
-          skip: true
+  - name: check prefix existence
+    stat:
+      path: "{{ compiler_args | select('search', '--prefix=.*') | map('regex_replace','^--prefix=(?P<prefix>.+)$', '\\g<prefix>') | list | last }}/bin"
+    register: prefix_path 
+    changed_when: no
 
-    - name: establish facts
-      set_fact:
-        compiler_args: "{{ compiler_default_args + build.get('args', []) }}"
-
-    - name: check prefix existence
-      stat:
-        path: "{{ compiler_args | select('search', '--prefix=.*') | map('regex_replace','^--prefix=(?P<prefix>.+)$', '\\g<prefix>') | list | last }}/bin"
-      register: prefix_path 
-      changed_when: no
-
-    - include_tasks: build_from_source.yml
-      when:
-        - not prefix_path.stat.exists
-
-  when:
-    - version is defined
+  - include_tasks: build_from_source.yml
+    when:
+      - not prefix_path.stat.exists
 
 

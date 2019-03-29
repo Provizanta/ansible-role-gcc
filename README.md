@@ -1,7 +1,7 @@
 GCC
 =========
 
-Install GNU Compiler Collection.
+Install GNU Compiler Collection from source.
 
 Requirements
 ------------
