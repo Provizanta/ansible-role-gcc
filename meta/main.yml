@@ -1,17 +1,24 @@
 ---
 
-dependencies: []
-
 galaxy_info:
-  author: 'Tibor Csoka'
-  description: 'Setup GCC, from repository or from source.'
-  company: ''
-  license: 'MIT'
-  min_ansible_version: '2.7.8'
+  role_name: gcc
+  author: Tibor Csóka
+  description: |
+    "Build and install GCC from source."
+  company: ""
+
+  license: MIT
+
+  min_ansible_version: 2.7.1
+
   platforms:
     - name: Ubuntu
       versions:
         - bionic
+        - cosmic
 
-  categories: []
+  galaxy_tags:
+    - gcc
+    - compiler
 
+dependencies: []

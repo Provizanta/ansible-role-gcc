@@ -1,6 +1,7 @@
 ---
 
 - name: establish build prerequisites
+  become: true
   package:
     name: "{{ compiler_needed_tools + ['wget','tar'] }}"
     state: present
@@ -10,41 +11,46 @@
     source_path: "{{ dir + '/gcc-' + version }}"
     build_dir_path: "{{ dir + '/gcc-' + version + '/build/' }}"
 
+- name: establish repo dir
+  file:
+    path: "{{ dir }}"
+    recurse: true
+    state: directory
+
 - name: extract source tarball
-  become: yes
+  become: true
   unarchive:
     src: "https://ftp.gnu.org/gnu/gcc/gcc-{{ version }}/gcc-{{ version }}.tar.gz"
-    remote_src: yes
+    remote_src: true
     dest: "{{ dir }}"
 
 - name: download prerequisites
-  shell: "./contrib/download_prerequisites"
+  command: "./contrib/download_prerequisites"
   args:
     chdir: "{{ source_path }}"
     creates: "{{ source_path }}/gmp-4.3.2.tar.bz2"
 
 - name: ensure build directory existence
-  become: yes
+  become: true
   file:
-    path: "{{ build_dir_path }}" 
+    path: "{{ build_dir_path }}"
     state: directory
 
 - name: configure build process
-  shell: "{{ source_path }}/configure {{ compiler_args | join(' ') }}" 
+  command: "{{ source_path }}/configure {{ compiler_args | join(' ') }}"
   args:
     chdir: "{{ build_dir_path }}"
+  changed_when: false
 
-- name: build 
+- name: build
   make:
     chdir: "{{ build_dir_path }}"
     target: all
     params:
-      --jobs: "{{ ansible_processor_cores * ansible_processor_threads_per_core }}" 
- 
-- name: install 
+      --jobs: "{{ ansible_processor_cores * ansible_processor_threads_per_core }}"
+
+- name: install
+  when: install | bool
   make:
     chdir: "{{ build_dir_path }}"
     target: install
-  when:
-    - install | bool
-

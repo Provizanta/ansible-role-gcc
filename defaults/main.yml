@@ -1,7 +1,7 @@
 ---
 
-dir: /tmp/gcc/
+dir: "/tmp/gcc/"    # repo clone destination
 
 version: "8.3.0"
 
-install: yes
+install: true       # install after build

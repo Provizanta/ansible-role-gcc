@@ -1,0 +1,13 @@
+---
+
+- name: Converge
+  hosts: all
+  roles:
+    - role: gcc
+      vars:
+        version: "8.3.0"
+        dir: "/tmp/"
+        build:
+          args:
+            - "--prefix=/usr/local/gcc/8.3.0"
+        install: true
