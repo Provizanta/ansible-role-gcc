@@ -8,21 +8,21 @@
 
 - name: prepare paths
   set_fact:
-    source_path: "{{ dir + '/gcc-' + version }}"
-    build_dir_path: "{{ dir + '/gcc-' + version + '/build/' }}"
+    source_path: "{{ gcc_dir + '/gcc-' + gcc_version }}"
+    build_dir_path: "{{ gcc_dir + '/gcc-' + gcc_version + '/build/' }}"
 
 - name: establish repo dir
   file:
-    path: "{{ dir }}"
+    path: "{{ gcc_dir }}"
     recurse: true
     state: directory
 
 - name: extract source tarball
   become: true
   unarchive:
-    src: "https://ftp.gnu.org/gnu/gcc/gcc-{{ version }}/gcc-{{ version }}.tar.gz"
+    src: "https://ftp.gnu.org/gnu/gcc/gcc-{{ gcc_version }}/gcc-{{ gcc_version }}.tar.gz"
     remote_src: true
-    dest: "{{ dir }}"
+    dest: "{{ gcc_dir }}"
 
 - name: download prerequisites
   command: "./contrib/download_prerequisites"
@@ -50,7 +50,7 @@
       --jobs: "{{ ansible_processor_cores * ansible_processor_threads_per_core }}"
 
 - name: install
-  when: install | bool
+  when: gcc_install | bool
   make:
     chdir: "{{ build_dir_path }}"
     target: install

@@ -5,9 +5,8 @@
   roles:
     - role: gcc
       vars:
-        version: "8.3.0"
-        dir: "/tmp/"
-        build:
-          args:
-            - "--prefix=/usr/local/gcc/8.3.0"
-        install: true
+        gcc_version: "8.3.0"
+        gcc_dir: "/tmp/"
+        gcc_build_args:
+          - "--prefix=/usr/local/gcc/8.3.0"
+        gcc_install: true

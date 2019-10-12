@@ -22,7 +22,7 @@
 
 - name: build and install the GCC
   vars:
-    compiler_args: "{{ compiler_default_args + build.get('args', []) }}"
+    compiler_args: "{{ compiler_default_args + (gcc_build_args | default([])) }}"
   block:
     - name: check prefix existence
       stat:
