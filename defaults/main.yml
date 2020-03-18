@@ -1,7 +1,13 @@
 ---
 
-gcc_dir: "/tmp/gcc/"    # repo clone destination
+gcc_install_from_source: false
 
-gcc_version: "8.3.0"
+gcc_source_dir: "/tmp/gcc/"    # repo clone destination
 
-gcc_install: true       # install after build
+gcc_source_version: "8.3.0"
+
+gcc_source_install: true       # install after build
+
+gcc_source_build_args: []
+
+gcc_versions: []      # gcc versions to be installed from packages

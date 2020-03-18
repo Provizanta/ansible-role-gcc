@@ -21,8 +21,9 @@
     state: present
 
 - name: build and install the GCC
+  when: gcc_install_from_source | bool
   vars:
-    compiler_args: "{{ compiler_default_args + (gcc_build_args | default([])) }}"
+    compiler_args: "{{ compiler_default_args + gcc_source_build_args }}"
   block:
     - name: check prefix existence
       stat:
@@ -32,3 +33,26 @@
 
     - include_tasks: build_from_source.yml
       when: not prefix_path.stat.exists
+
+- name: establish binary packages
+  become: true
+  package:
+    name: "{{ '%s-%s' | format(item[0], item[1]) }}"
+    state: present
+  loop: "{{ ['gcc', 'g++'] | product(gcc_versions) | list }}"
+
+- name: update alternatives
+  become: true
+  command: "update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-{{ item }} {{ 100 + (item | int) }} --slave /usr/bin/gcc gcc /usr/bin/gcc-{{ item }}"    # noqa 204
+  loop: "{{ gcc_versions }}"
+  changed_when: false
+
+# does not support slaves!
+# - name: update alternatives
+#   become: true
+#   alternatives:
+#     name: "{{ item[0] }}"
+#     path: "/usr/bin/{{ item[0] }}-{{ item[1] }}"
+#     priority: "{{ 50 + (item[1] | int) }}"
+#     link: "/usr/bin/{{ item[0] }}"
+#   loop: "{{ ['gcc', 'g++'] | product(gcc_versions) | list }}"

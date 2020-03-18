@@ -5,8 +5,10 @@
   roles:
     - role: gcc
       vars:
-        gcc_version: "8.3.0"
-        gcc_dir: "/tmp/"
-        gcc_build_args:
-          - "--prefix=/usr/local/gcc/8.3.0"
-        gcc_install: true
+        # gcc_version_version: "8.3.0"
+        # gcc_source_dir: "/tmp/"
+        # gcc_source_build_args:
+        #   - "--prefix=/usr/local/gcc/8.3.0"
+        # gcc_source_install: true
+        gcc_versions:
+          - 8

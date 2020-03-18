@@ -15,16 +15,17 @@ Role Variables
 
 These variables are defined in [defaults/main.yml](./defaults/main.yml):
 
-    gcc_dir: "/tmp/gcc/"    # repo clone destination
+    gcc_install_from_source: false
 
-    gcc_version: "8.3.0"
+    gcc_source_dir: "/tmp/gcc/"    # repo clone destination
 
-    gcc_install: true       # install after build
+    gcc_source_version: "8.3.0"
 
-Other variables that can be set:
+    gcc_source_install: true       # install after build
 
-    gcc_build_args:         # list, arguments to be passed to the build
+    gcc_source_build_args: []
 
+    gcc_versions: []      # gcc versions to be installed from packages
 
 Dependencies
 ------------
@@ -41,7 +42,7 @@ Example Playbook
           vars:
             gcc_version: "8.3.0"
             gcc_dir: "/tmp/"
-            gcc_build_args:
+            gcc_source_build_args:
               - "--prefix=/usr/local/gcc/8.3.0"
             gcc_install: true
 
