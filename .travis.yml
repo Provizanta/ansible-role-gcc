@@ -1,22 +1,22 @@
 ---
 
+dist: bionic
+
 language: python
 python:
   - 3.6
-services: docker
 
 env:
   global:
     - ROLE_NAME: gcc
   matrix:
-    - MOLECULE_DISTRO: ubuntu/bionic
+    - MOLECULE_DISTRO: ubuntu1804
 
 install:
-  - pip install molecule[lxd]
+  - pip install molecule[lxd] ansible-lint flake8
 
 before_script:
   - ansible-galaxy install teebor_choka.lxd
-  -
   - cd ../
   - mv ansible-role-$ROLE_NAME $ROLE_NAME
   - cd $ROLE_NAME

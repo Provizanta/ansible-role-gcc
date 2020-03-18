@@ -3,48 +3,25 @@
 dependency:
   name: galaxy
 driver:
-  name: lxd
-lint:
-  name: yamllint
-  options:
-    config-file: .yamllint
+  name: docker
+lint: |
+  set -e
+  yamllint -c .yamllint .
+  ansible-lint
+  flake8
 platforms:
   - name: instance
-    url: https://127.0.0.1:8443
-    cert_file: /root/.config/lxc/client.crt
-    key_file: /root/.config/lxc/client.key
-    trust_password: password
-    source:
-      type: image
-      mode: pull
-      server: https://images.linuxcontainers.org
-      protocol: lxd
-      alias: ${MOLECULE_DISTRO:-ubuntu/bionic}/amd64
-    architecture: x86_64
-    config:
-      limits.cpu: 2
-    devices:
-      kvm:
-        path: /dev/kvm
-        type: unix-char
-    profiles:
-      - default
-    force_stop: false
+    image: "geerlingguy/docker-${MOLECULE_DISTRO:-centos7}-ansible:latest"
+    command: ${MOLECULE_DOCKER_COMMAND:-""}
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+    privileged: true
+    pre_build_image: true
 provisioner:
   name: ansible
-  log: true
-  options:
-    v: false
   lint:
     name: ansible-lint
   playbooks:
     converge: ${MOLECULE_PLAYBOOK:-playbook.yml}
-# test_sequence:
-#   - lint
-#   - dependency
-#   - syntax
-#   - verify
 verifier:
   name: testinfra
-  lint:
-    name: flake8
