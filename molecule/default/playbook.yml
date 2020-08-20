@@ -3,7 +3,7 @@
 - name: Converge
   hosts: all
   roles:
-    - role: gcc
+    - role: ansible-role-gcc
       vars:
         # gcc_version_version: "8.3.0"
         # gcc_source_dir: "/tmp/"

@@ -22,5 +22,6 @@ provisioner:
     name: ansible-lint
   playbooks:
     converge: ${MOLECULE_PLAYBOOK:-playbook.yml}
+    prepare: ${MOLECULE_PREPARE:-prepare.yml}
 verifier:
   name: testinfra

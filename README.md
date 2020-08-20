@@ -1,7 +1,7 @@
 Ansible role: GCC
 =========
 
-[![Build Status](https://travis-ci.com/Provizanta/ansible-role-gcc.svg?branch=master)](https://travis-ci.com/Provizanta/ansible-role-gcc)
+![Build & Deploy](https://github.com/Provizanta/ansible-role-gcc/workflows/molecule/badge.svg?branch=master)
 
 Build and install GNU Compiler Collection **from source**.
 

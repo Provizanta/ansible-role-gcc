@@ -13,6 +13,12 @@
       paths:
         - '{{ role_path }}/vars'
 
+- name: establish dependencies
+  when: ansible_os_family == 'Debian'
+  apt:
+    name: dirmngr
+    state: present
+
 - name: ensure gcc repo presence
   when: ansible_os_family == 'Debian'
   become: true
