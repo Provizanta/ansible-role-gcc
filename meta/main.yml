@@ -2,6 +2,7 @@
 
 galaxy_info:
   role_name: gcc
+  namespace: provizanta
   author: Tibor Csóka
   description: |
     "Build and install GCC from source."
